@@ -1,0 +1,928 @@
+import math
+import tkinter as tk
+from tkinter import messagebox
+
+
+# ==================================================
+# MATHEMATICAL FUNCTIONS
+# These functions only perform calculations.
+# They do not interact with the GUI.
+# ==================================================
+
+def area_circle(radius):
+    return math.pi * radius ** 2
+
+
+def area_square(side):
+    return side ** 2
+
+
+def area_rectangle(length, width):
+    return length * width
+
+
+def area_triangle(base, height):
+    return (base * height) / 2
+
+
+def volume_sphere(radius):
+    return (4 / 3) * math.pi * radius ** 3
+
+
+def volume_cube(side):
+    return side ** 3
+
+
+def volume_cuboid(length, width, height):
+    return length * width * height
+
+
+def volume_cone(radius, height):
+    return (1 / 3) * math.pi * radius ** 2 * height
+
+
+# ==================================================
+# MAIN WINDOW
+# ==================================================
+
+root = tk.Tk()
+
+root.title("CHSLO Calculator")
+
+root.geometry("700x560")
+
+root.configure(bg="#2c3e50")
+
+root.resizable(False, False)
+
+
+# ==================================================
+# RESULT DISPLAY
+# ==================================================
+
+result_label = tk.Label(
+    root,
+    text="Result: Ready",
+    font=("Arial", 18, "bold"),
+    bg="#2c3e50",
+    fg="#2ecc71",
+    pady=15
+)
+
+result_label.pack()
+
+
+# ==================================================
+# MENU FRAME
+# This holds the main navigation buttons.
+# ==================================================
+
+menu_frame = tk.Frame(
+    root,
+    bg="#2c3e50"
+)
+
+menu_frame.pack(pady=5)
+
+
+# ==================================================
+# WORK FRAME
+# Different calculator screens appear here.
+# ==================================================
+
+work_frame = tk.Frame(
+    root,
+    bg="#2c3e50"
+)
+
+work_frame.pack(
+    pady=10,
+    fill=tk.BOTH,
+    expand=True
+)
+
+
+# ==================================================
+# HELPER FUNCTIONS
+# ==================================================
+
+def show_result(result):
+    """
+    Changes the result label at the top of the window.
+    """
+
+    result_label.config(
+        text=f"Result: {result}"
+    )
+
+
+def clear_result():
+    """
+    Resets the result display.
+    """
+
+    result_label.config(
+        text="Result: Ready"
+    )
+
+
+def clear_work_area():
+    """
+    Removes all widgets from the work frame.
+
+    This allows a new calculator screen
+    to replace the old one.
+    """
+
+    for widget in work_frame.winfo_children():
+
+        widget.destroy()
+
+
+# ==================================================
+# DMAS CALCULATOR
+# ==================================================
+
+def open_dmas():
+
+    # Remove the previous screen.
+    clear_work_area()
+
+    # Screen heading.
+    tk.Label(
+        work_frame,
+        text="DMAS Calculator",
+        font=("Arial", 15, "bold"),
+        bg="#2c3e50",
+        fg="white"
+    ).pack(pady=8)
+
+    # First number.
+    tk.Label(
+        work_frame,
+        text="First Number:",
+        bg="#2c3e50",
+        fg="white"
+    ).pack()
+
+    number_1_entry = tk.Entry(
+        work_frame,
+        font=("Arial", 12),
+        width=22,
+        justify="center"
+    )
+
+    number_1_entry.pack(pady=3)
+
+    # Operator.
+    tk.Label(
+        work_frame,
+        text="Operation:  +   −   ×   ÷",
+        bg="#2c3e50",
+        fg="white"
+    ).pack()
+
+    operator_entry = tk.Entry(
+        work_frame,
+        font=("Arial", 12),
+        width=10,
+        justify="center"
+    )
+
+    operator_entry.pack(pady=3)
+
+    # Second number.
+    tk.Label(
+        work_frame,
+        text="Second Number:",
+        bg="#2c3e50",
+        fg="white"
+    ).pack()
+
+    number_2_entry = tk.Entry(
+        work_frame,
+        font=("Arial", 12),
+        width=22,
+        justify="center"
+    )
+
+    number_2_entry.pack(pady=3)
+
+    # ----------------------------------------------
+    # This function runs when Calculate is clicked.
+    # ----------------------------------------------
+
+    def calculate():
+
+        try:
+
+            number_1 = float(
+                number_1_entry.get()
+            )
+
+            number_2 = float(
+                number_2_entry.get()
+            )
+
+            operator = operator_entry.get().strip()
+
+            if operator == "+":
+
+                answer = number_1 + number_2
+
+            elif operator == "-":
+
+                answer = number_1 - number_2
+
+            elif operator == "*":
+
+                answer = number_1 * number_2
+
+            elif operator == "/":
+
+                if number_2 == 0:
+
+                    messagebox.showerror(
+                        "Math Error",
+                        "Division by zero is undefined."
+                    )
+
+                    return
+
+                answer = number_1 / number_2
+
+            else:
+
+                messagebox.showerror(
+                    "Invalid Operator",
+                    "Use +, -, * or /."
+                )
+
+                return
+
+            show_result(answer)
+
+        except ValueError:
+
+            messagebox.showerror(
+                "Input Error",
+                "Please enter valid numbers."
+            )
+
+    # Calculate button.
+    tk.Button(
+        work_frame,
+        text="Calculate",
+        command=calculate,
+        font=("Arial", 12, "bold"),
+        bg="#3498db",
+        fg="white",
+        width=16,
+        cursor="hand2"
+    ).pack(pady=18)
+
+
+# ==================================================
+# ELECTRICITY BILL CALCULATOR
+# ==================================================
+
+def open_bills():
+
+    clear_work_area()
+
+    tk.Label(
+        work_frame,
+        text="Electricity Bill Calculator",
+        font=("Arial", 15, "bold"),
+        bg="#2c3e50",
+        fg="white"
+    ).pack(pady=8)
+
+    tk.Label(
+        work_frame,
+        text="Uses a progressive slab calculation",
+        font=("Arial", 9),
+        bg="#2c3e50",
+        fg="#bdc3c7"
+    ).pack()
+
+    tk.Label(
+        work_frame,
+        text="Enter Units Used:",
+        bg="#2c3e50",
+        fg="white"
+    ).pack(pady=10)
+
+    units_entry = tk.Entry(
+        work_frame,
+        font=("Arial", 12),
+        width=22,
+        justify="center"
+    )
+
+    units_entry.pack()
+
+    def calculate_bill():
+
+        try:
+
+            units = float(
+                units_entry.get()
+            )
+
+            if units < 0:
+
+                messagebox.showerror(
+                    "Input Error",
+                    "Units cannot be negative."
+                )
+
+                return
+
+            # Fixed charge.
+            bill = 1200
+
+            # Progressive tariff calculation.
+
+            if units <= 100:
+
+                bill += units * 12.5
+
+            elif units <= 200:
+
+                bill += (
+                    100 * 12.5
+                    + (units - 100) * 26.5
+                )
+
+            elif units <= 300:
+
+                bill += (
+                    100 * 12.5
+                    + 100 * 26.5
+                    + (units - 200) * 38
+                )
+
+            else:
+
+                bill += (
+                    100 * 12.5
+                    + 100 * 26.5
+                    + 100 * 38
+                    + (units - 300) * 65
+                )
+
+            show_result(
+                f"Rs. {bill:,.2f}"
+            )
+
+        except ValueError:
+
+            messagebox.showerror(
+                "Input Error",
+                "Please enter a valid number."
+            )
+
+    tk.Button(
+        work_frame,
+        text="Calculate Bill",
+        command=calculate_bill,
+        font=("Arial", 12, "bold"),
+        bg="#e67e22",
+        fg="white",
+        width=16,
+        cursor="hand2"
+    ).pack(pady=20)
+
+
+# ==================================================
+# ROOTS AND POWERS
+# ==================================================
+
+def open_roots():
+
+    clear_work_area()
+
+    tk.Label(
+        work_frame,
+        text="Roots & Powers",
+        font=("Arial", 15, "bold"),
+        bg="#2c3e50",
+        fg="white"
+    ).pack(pady=8)
+
+    tk.Label(
+        work_frame,
+        text="Enter Number:",
+        bg="#2c3e50",
+        fg="white"
+    ).pack()
+
+    number_entry = tk.Entry(
+        work_frame,
+        font=("Arial", 12),
+        width=22,
+        justify="center"
+    )
+
+    number_entry.pack(pady=8)
+
+    def calculate(operation):
+
+        try:
+
+            number = float(
+                number_entry.get()
+            )
+
+            if operation == "square_root":
+
+                if number < 0:
+
+                    messagebox.showerror(
+                        "Math Error",
+                        "A negative number has no real square root."
+                    )
+
+                    return
+
+                answer = math.sqrt(number)
+
+            elif operation == "square":
+
+                answer = number ** 2
+
+            elif operation == "cube_root":
+
+                # This correctly handles
+                # negative cube roots.
+
+                answer = math.copysign(
+                    abs(number) ** (1 / 3),
+                    number
+                )
+
+            elif operation == "cube":
+
+                answer = number ** 3
+
+            show_result(
+                f"{answer:.4f}"
+            )
+
+        except ValueError:
+
+            messagebox.showerror(
+                "Input Error",
+                "Please enter a valid number."
+            )
+
+    button_frame = tk.Frame(
+        work_frame,
+        bg="#2c3e50"
+    )
+
+    button_frame.pack(pady=18)
+
+    tk.Button(
+        button_frame,
+        text="√ Root",
+        command=lambda: calculate("square_root"),
+        bg="#9b59b6",
+        fg="white",
+        width=12
+    ).pack(
+        side=tk.LEFT,
+        padx=4
+    )
+
+    tk.Button(
+        button_frame,
+        text="x² Square",
+        command=lambda: calculate("square"),
+        bg="#9b59b6",
+        fg="white",
+        width=12
+    ).pack(
+        side=tk.LEFT,
+        padx=4
+    )
+
+    tk.Button(
+        button_frame,
+        text="∛ Cube Root",
+        command=lambda: calculate("cube_root"),
+        bg="#9b59b6",
+        fg="white",
+        width=12
+    ).pack(
+        side=tk.LEFT,
+        padx=4
+    )
+
+    tk.Button(
+        button_frame,
+        text="x³ Cube",
+        command=lambda: calculate("cube"),
+        bg="#9b59b6",
+        fg="white",
+        width=12
+    ).pack(
+        side=tk.LEFT,
+        padx=4
+    )
+
+
+# ==================================================
+# GEOMETRY CALCULATOR
+# ==================================================
+
+def open_geometry():
+
+    clear_work_area()
+
+    tk.Label(
+        work_frame,
+        text="Geometry Calculator",
+        font=("Arial", 15, "bold"),
+        bg="#2c3e50",
+        fg="white"
+    ).pack(pady=5)
+
+    # Stores the selected mode.
+    mode_var = tk.StringVar(
+        value="Area"
+    )
+
+    # Stores the selected shape.
+    shape_var = tk.StringVar(
+        value="Circle"
+    )
+
+    # ----------------------------------------------
+    # Area or volume selection.
+    # ----------------------------------------------
+
+    mode_frame = tk.Frame(
+        work_frame,
+        bg="#2c3e50"
+    )
+
+    mode_frame.pack(pady=5)
+
+    tk.Radiobutton(
+        mode_frame,
+        text="Area",
+        variable=mode_var,
+        value="Area",
+        bg="#2c3e50",
+        fg="white",
+        selectcolor="#34495e"
+    ).pack(
+        side=tk.LEFT,
+        padx=15
+    )
+
+    tk.Radiobutton(
+        mode_frame,
+        text="Volume",
+        variable=mode_var,
+        value="Volume",
+        bg="#2c3e50",
+        fg="white",
+        selectcolor="#34495e"
+    ).pack(
+        side=tk.LEFT,
+        padx=15
+    )
+
+    # ----------------------------------------------
+    # Shape dropdown.
+    # ----------------------------------------------
+
+    tk.Label(
+        work_frame,
+        text="Select Shape:",
+        bg="#2c3e50",
+        fg="white"
+    ).pack(pady=5)
+
+    shape_menu = tk.OptionMenu(
+        work_frame,
+        shape_var,
+        "Circle",
+        "Square",
+        "Rectangle",
+        "Triangle",
+        "Sphere",
+        "Cube",
+        "Cuboid",
+        "Cone"
+    )
+
+    shape_menu.config(
+        width=15
+    )
+
+    shape_menu.pack()
+
+    # Dynamic input widgets appear here.
+    input_frame = tk.Frame(
+        work_frame,
+        bg="#2c3e50"
+    )
+
+    input_frame.pack(pady=8)
+
+    input_entries = []
+
+    def set_inputs():
+
+        # Remove old inputs.
+
+        for widget in input_frame.winfo_children():
+
+            widget.destroy()
+
+        input_entries.clear()
+
+        shape = shape_var.get()
+
+        # Decide which measurements are needed.
+
+        if shape in (
+            "Circle",
+            "Sphere",
+            "Cube"
+        ):
+
+            labels = ["Radius / Side:"]
+
+        elif shape in (
+            "Square",
+        ):
+
+            labels = ["Side:"]
+
+        elif shape == "Rectangle":
+
+            labels = [
+                "Length:",
+                "Width:"
+            ]
+
+        elif shape == "Triangle":
+
+            labels = [
+                "Base:",
+                "Height:"
+            ]
+
+        elif shape == "Cuboid":
+
+            labels = [
+                "Length:",
+                "Width:",
+                "Height:"
+            ]
+
+        elif shape == "Cone":
+
+            labels = [
+                "Radius:",
+                "Height:"
+            ]
+
+        else:
+
+            labels = []
+
+        # Create the required input boxes.
+
+        for label_text in labels:
+
+            tk.Label(
+                input_frame,
+                text=label_text,
+                bg="#2c3e50",
+                fg="white"
+            ).pack()
+
+            entry = tk.Entry(
+                input_frame,
+                font=("Arial", 11),
+                width=18,
+                justify="center"
+            )
+
+            entry.pack(pady=2)
+
+            input_entries.append(
+                entry
+            )
+
+    def calculate_geometry():
+
+        try:
+
+            shape = shape_var.get()
+
+            values = []
+
+            for entry in input_entries:
+
+                value = float(
+                    entry.get()
+                )
+
+                if value < 0:
+
+                    raise ValueError
+
+                values.append(value)
+
+            if shape == "Circle":
+
+                answer = area_circle(
+                    values[0]
+                )
+
+                unit = "square units"
+
+            elif shape == "Square":
+
+                answer = area_square(
+                    values[0]
+                )
+
+                unit = "square units"
+
+            elif shape == "Rectangle":
+
+                answer = area_rectangle(
+                    values[0],
+                    values[1]
+                )
+
+                unit = "square units"
+
+            elif shape == "Triangle":
+
+                answer = area_triangle(
+                    values[0],
+                    values[1]
+                )
+
+                unit = "square units"
+
+            elif shape == "Sphere":
+
+                answer = volume_sphere(
+                    values[0]
+                )
+
+                unit = "cubic units"
+
+            elif shape == "Cube":
+
+                answer = volume_cube(
+                    values[0]
+                )
+
+                unit = "cubic units"
+
+            elif shape == "Cuboid":
+
+                answer = volume_cuboid(
+                    values[0],
+                    values[1],
+                    values[2]
+                )
+
+                unit = "cubic units"
+
+            elif shape == "Cone":
+
+                answer = volume_cone(
+                    values[0],
+                    values[1]
+                )
+
+                unit = "cubic units"
+
+            show_result(
+                f"{answer:.4f} {unit}"
+            )
+
+        except (
+            ValueError,
+            IndexError
+        ):
+
+            messagebox.showerror(
+                "Input Error",
+                "Enter valid positive measurements and press Set Inputs."
+            )
+
+    tk.Button(
+        work_frame,
+        text="Set Inputs",
+        command=set_inputs,
+        bg="#34495e",
+        fg="white",
+        width=15
+    ).pack(pady=4)
+
+    tk.Button(
+        work_frame,
+        text="Calculate",
+        command=calculate_geometry,
+        font=("Arial", 12, "bold"),
+        bg="#27ae60",
+        fg="white",
+        width=16
+    ).pack(pady=8)
+
+    # Create inputs for the default shape.
+    set_inputs()
+
+
+# ==================================================
+# MAIN MENU BUTTONS
+# ==================================================
+
+tk.Button(
+    menu_frame,
+    text="DMAS",
+    command=open_dmas,
+    font=("Arial", 11, "bold"),
+    bg="#3498db",
+    fg="white",
+    width=12
+).pack(
+    side=tk.LEFT,
+    padx=4
+)
+
+
+tk.Button(
+    menu_frame,
+    text="Bills",
+    command=open_bills,
+    font=("Arial", 11, "bold"),
+    bg="#e67e22",
+    fg="white",
+    width=12
+).pack(
+    side=tk.LEFT,
+    padx=4
+)
+
+
+tk.Button(
+    menu_frame,
+    text="Roots",
+    command=open_roots,
+    font=("Arial", 11, "bold"),
+    bg="#9b59b6",
+    fg="white",
+    width=12
+).pack(
+    side=tk.LEFT,
+    padx=4
+)
+
+
+tk.Button(
+    menu_frame,
+    text="Geometry",
+    command=open_geometry,
+    font=("Arial", 11, "bold"),
+    bg="#27ae60",
+    fg="white",
+    width=12
+).pack(
+    side=tk.LEFT,
+    padx=4
+)
+
+
+tk.Button(
+    root,
+    text="Clear Result",
+    command=clear_result,
+    bg="#7f8c8d",
+    fg="white",
+    width=15
+).pack(
+    pady=5
+)
+
+
+# ==================================================
+# START APPLICATION
+# ==================================================
+
+open_dmas()
+
+root.mainloop()
